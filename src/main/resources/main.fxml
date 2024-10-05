@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane fx:id="window_main" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="638.0" prefWidth="1036.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.MainController">
+   <fx:include fx:id="pane_evntTickets" source="event_detail_view.fxml"/>
+   <fx:include fx:id="pane_mbrDet" source="member_details.fxml"/>
+   <children>
+      <AnchorPane fx:id="pane_menu" prefHeight="636.0" prefWidth="295.0">
+         <children>
+            <Button id="menu_buttons" fx:id="btn_membersView" layoutY="252.0" mnemonicParsing="false" onAction="#showMembersView" prefHeight="166.0" prefWidth="294.0" text="Members">
+               <graphic>
+                  <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/members_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button id="menu_buttons" fx:id="btn_eventsView" layoutY="435.0" mnemonicParsing="false" onAction="#showEventsView" prefHeight="186.0" prefWidth="294.0" text="Events">
+               <graphic>
+                  <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/events_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button id="menu_buttons" fx:id="btn_homeView" layoutY="73.0" mnemonicParsing="false" prefHeight="164.0" prefWidth="294.0" text="Home">
+               <graphic>
+                  <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/home_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Label fx:id="titleText" alignment="CENTER" contentDisplay="CENTER" layoutX="3.0" layoutY="1.0" prefHeight="69.0" prefWidth="287.0" stylesheets="@styles.css" text="Membership &amp; Event Management System" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Segoe UI Black" size="12.0" />
+               </font></Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="pane_mbrMain" layoutX="295.0" prefHeight="636.0" prefWidth="745.0" visible="true">
+         <children>
+            <TableView fx:id="members_list" layoutX="14.0" layoutY="14.0" onMouseReleased="#enableViewMembership" prefHeight="279.0" prefWidth="712.0">
+               <columns>
+                  <TableColumn fx:id="ucidcol" editable="false" prefWidth="85.60003662109375" text="UCID" />
+                  <TableColumn fx:id="fnamecol" editable="false" prefWidth="146.4000244140625" text="First Name" />
+                  <TableColumn fx:id="lnamecol" editable="false" prefWidth="141.60003662109375" text="Last Name" />
+                  <TableColumn fx:id="yearstudycol" editable="false" prefWidth="99.20001220703125" text="Year of Study" />
+                  <TableColumn fx:id="citizencol" editable="false" prefWidth="88.7999267578125" text="Citizen" />
+                  <TableColumn fx:id="statuscol" editable="false" prefWidth="116.7998046875" text="Status" />
+               </columns>
+            </TableView>
+            <Button fx:id="btn_addMember" layoutX="308.0" layoutY="576.0" mnemonicParsing="false" text="Add Member" />
+            <Button fx:id="btn_importMembers" layoutX="14.0" layoutY="308.0" mnemonicParsing="false" text="Import Members" />
+            <Button fx:id="btn_searchMbr" layoutX="620.0" layoutY="307.0" mnemonicParsing="false" onAction="#searchMember" prefHeight="46.0" prefWidth="98.0" text="Search" />
+            <Button fx:id="btn_viewMembership" disable="true" layoutX="247.0" layoutY="308.0" mnemonicParsing="false" onAction="#viewMembership" text="View Membership" />
+            <TextField fx:id="txt_memberSearch" layoutX="459.0" layoutY="313.0" onKeyReleased="#checkMbrSearchText" prefHeight="34.0" prefWidth="150.0" promptText="Name/UCID" />
+            <AnchorPane id="innerpane" layoutX="18.0" layoutY="393.0" prefHeight="174.0" prefWidth="706.0">
+               <children>
+                  <TextField fx:id="txt_memberFName" layoutX="80.0" layoutY="18.0" promptText="First Name" />
+                  <TextField fx:id="txt_memberLName" layoutX="337.0" layoutY="18.0" promptText="Last Name" style="-fx-border: none;" stylesheets="@styles.css" />
+                  <TextField fx:id="txt_memberID" layoutX="52.0" layoutY="72.0" promptText="UCID" />
+                  <ChoiceBox fx:id="pick_mbrAddYear" layoutX="553.0" layoutY="69.0" prefHeight="34.0" prefWidth="130.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="1st Year" />
+                           <String fx:value="2nd Year" />
+                           <String fx:value="3rd Year" />
+                           <String fx:value="4th Year and above" />
+                           <String fx:value="Graduate" />
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <DatePicker fx:id="pick_mbrAddTill" layoutX="437.0" layoutY="127.0" prefHeight="35.0" prefWidth="129.0" />
+                  <DatePicker fx:id="pick_mbrAddSince" layoutX="180.0" layoutY="127.0" prefHeight="35.0" prefWidth="130.0" />
+                  <ChoiceBox fx:id="pick_mbrAddCitizen" layoutX="568.0" layoutY="15.0" prefHeight="34.0" prefWidth="130.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Domestic" />
+                           <String fx:value="International" />
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <Text layoutX="10.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UCID:" />
+                  <Text layoutX="8.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name:" />
+                  <Text layoutX="262.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name:" />
+                  <Text layoutX="460.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year of Study:" />
+                  <Text layoutX="519.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Citizen:" />
+                  <TextField fx:id="txt_memberID1" layoutX="280.0" layoutY="72.0" promptText="Email Address" />
+                  <Text layoutX="233.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:" />
+                  <Text layoutX="80.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Since:" />
+                  <Text layoutX="344.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Until:" />
+               </children>
+            </AnchorPane>
+            <Text layoutX="306.0" layoutY="381.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add a New Member" textAlignment="CENTER" underline="true">
+               <font>
+                  <Font name="Segoe UI Semibold" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+<!--      <AnchorPane fx:id="pane_mbrDet" layoutX="293.0" prefHeight="638.0" prefWidth="745.0" visible="false">-->
+<!--         <children>-->
+<!--            <Button fx:id="btn_mbrDetBack" layoutX="609.0" layoutY="576.0" mnemonicParsing="false" onAction="#showMembersView" prefHeight="37.0" prefWidth="105.0" text="Back" />-->
+<!--            <Text fx:id="txt_mbrDetLbl" layoutX="298.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membership Details" textAlignment="CENTER" wrappingWidth="150.0">-->
+<!--               <font>-->
+<!--                  <Font name="Segoe UI Semibold" size="14.0" />-->
+<!--               </font></Text>-->
+<!--            <AnchorPane id="innerpane" layoutX="25.0" layoutY="58.0" prefHeight="506.0" prefWidth="690.0">-->
+<!--               <children>-->
+<!--                  <Button fx:id="btn_delMember" layoutX="403.0" layoutY="366.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="182.0" text="Delete Member Data" />-->
+<!--                  <Text fx:id="txt_mbrDetUcid" disable="true" layoutX="302.0" layoutY="49.0" wrappingWidth="114.69559860229481" />-->
+<!--                  <Text fx:id="txt_mbrDetSince" disable="true" layoutX="305.0" layoutY="190.0" wrappingWidth="122.39999999999986" />-->
+<!--                  <DatePicker fx:id="pick_mbrDetTill" layoutX="537.0" layoutY="169.0" prefHeight="35.0" prefWidth="138.0" />-->
+<!--                  <ChoiceBox fx:id="pick_mbrDetYear" layoutX="302.0" layoutY="119.0" prefHeight="39.0" prefWidth="130.0">-->
+<!--                     <items>-->
+<!--                        <FXCollections fx:factory="observableArrayList">-->
+<!--                           <String fx:value="1st Year" />-->
+<!--                           <String fx:value="2nd Year" />-->
+<!--                           <String fx:value="3rd Year" />-->
+<!--                           <String fx:value="4th Year and above" />-->
+<!--                           <String fx:value="Graduate" />-->
+<!--                        </FXCollections>-->
+<!--                     </items>-->
+<!--                  </ChoiceBox>-->
+<!--                  <TextField fx:id="txt_mbrDetEmail" layoutX="302.0" layoutY="72.0" prefHeight="34.0" prefWidth="371.0" text="Email" />-->
+<!--                  <ChoiceBox fx:id="pick_mbrDetCitizen" layoutX="537.0" layoutY="119.0" prefHeight="39.0" prefWidth="138.0">-->
+<!--                     <items>-->
+<!--                        <FXCollections fx:factory="observableArrayList">-->
+<!--                           <String fx:value="Domestic" />-->
+<!--                           <String fx:value="International" />-->
+<!--                        </FXCollections>-->
+<!--                     </items>-->
+<!--                  </ChoiceBox>-->
+<!--      &lt;!&ndash;            <TextField fx:id="txt_mbrDetPayment" layoutX="82.0" layoutY="148.0" text="Method of Payment" />&ndash;&gt;-->
+<!--                  <ChoiceBox fx:id="pick_mbrDetPayment" layoutX="303.0" layoutY="215.0" prefHeight="39.0" prefWidth="130.0">-->
+<!--                     <items>-->
+<!--                        <FXCollections fx:factory="observableArrayList">-->
+<!--                           <String fx:value="Etransfer" />-->
+<!--                           <String fx:value="Cash" />-->
+<!--                           <String fx:value="Other" />-->
+<!--                        </FXCollections>-->
+<!--                     </items>-->
+<!--                  </ChoiceBox>-->
+<!--                  <ImageView fitHeight="158.0" fitWidth="176.0" layoutX="10.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                     <image>-->
+<!--                        <Image url="@images/member_icon.png" />-->
+<!--                     </image>-->
+<!--                  </ImageView>-->
+<!--                  <Text fx:id="txt_mbrDetName" layoutX="14.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member's Full Name Here" textAlignment="CENTER" wrappingWidth="161.0" />-->
+<!--                  <Text layoutX="247.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UCID:" textAlignment="RIGHT" />-->
+<!--                  <Text layoutX="247.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:" textAlignment="RIGHT" />-->
+<!--                  <Text layoutX="198.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year of Study:" textAlignment="RIGHT" />-->
+<!--                  <Text layoutX="455.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nationality:" textAlignment="RIGHT" />-->
+<!--                  <Text layoutX="439.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Until:" textAlignment="RIGHT" />-->
+<!--                  <Button fx:id="btn_updMember" layoutX="570.0" layoutY="215.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="105.0" text="Update" />-->
+<!--                  <Text layoutX="195.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Since:" textAlignment="RIGHT" />-->
+<!--                  <TableView layoutX="14.0" layoutY="286.0" prefHeight="198.0" prefWidth="294.0">-->
+<!--                    <columns>-->
+<!--                      <TableColumn fx:id="mbrPartTable" prefWidth="61.0" text="Year" />-->
+<!--                      <TableColumn prefWidth="133.00003051757812" text="Event Name" />-->
+<!--                        <TableColumn minWidth="4.0" prefWidth="93.0" text="Role" />-->
+<!--                    </columns>-->
+<!--                  </TableView>-->
+<!--                  <Text layoutX="180.0" layoutY="239.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Payment Method:" textAlignment="RIGHT" />-->
+<!--               </children>-->
+<!--            </AnchorPane>-->
+<!--         </children>-->
+<!--      </AnchorPane>-->
+<!--      <AnchorPane fx:id="pane_evntTickets" layoutX="295.0" prefHeight="636.0" visible="false" prefWidth="745.0">-->
+<!--         <children>-->
+<!--            <TableView fx:id="members_list1" layoutX="17.0" layoutY="45.0" onMouseReleased="#enableViewMembership" prefHeight="372.0" prefWidth="712.0">-->
+<!--               <columns>-->
+<!--                  <TableColumn fx:id="ucidcol1" editable="false" prefWidth="85.60003662109375" text="UCID" />-->
+<!--                  <TableColumn fx:id="fnamecol1" editable="false" prefWidth="146.4000244140625" text="First Name" />-->
+<!--                  <TableColumn fx:id="lnamecol1" editable="false" prefWidth="141.60003662109375" text="Last Name" />-->
+<!--                  <TableColumn fx:id="yearstudycol1" editable="false" prefWidth="99.20001220703125" text="Status" />-->
+<!--                  <TableColumn fx:id="citizencol1" editable="false" prefWidth="115.9998779296875" text="Ticket Purchased" />-->
+<!--               </columns>-->
+<!--            </TableView>-->
+<!--            <AnchorPane id="innerpane" layoutX="16.0" layoutY="432.0" prefHeight="133.0" prefWidth="712.0">-->
+<!--               <children>-->
+<!--                  <Button fx:id="btn_addMember1" layoutX="562.0" layoutY="76.0" mnemonicParsing="false" text="Add as Member" />-->
+<!--                  <Button fx:id="btn_importMembers1" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" text="Add Event List" />-->
+<!--                  <Button fx:id="btn_searchMbr1" layoutX="604.0" layoutY="11.0" mnemonicParsing="false" onAction="#searchMember" prefHeight="38.0" prefWidth="98.0" text="Search" />-->
+<!--                  <TextField fx:id="txt_memberSearch1" layoutX="443.0" layoutY="13.0" onKeyReleased="#checkMbrSearchText" prefHeight="34.0" prefWidth="150.0" promptText="Name/UCID" />-->
+<!--                  <Text layoutX="156.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Analyzing event file: " />-->
+<!--                  <CheckBox layoutX="14.0" layoutY="63.0" mnemonicParsing="false" text="Show Members" />-->
+<!--                  <CheckBox layoutX="14.0" layoutY="97.0" mnemonicParsing="false" text="Show Non-Members" />-->
+<!--               </children>-->
+<!--            </AnchorPane>-->
+<!--            <Text fx:id="txt_eveDetLbl" layoutX="297.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Event Details" textAlignment="CENTER" wrappingWidth="150.0">-->
+<!--               <font>-->
+<!--                  <Font name="Segoe UI Semibold" size="14.0" />-->
+<!--               </font>-->
+<!--            </Text>-->
+<!--         </children>-->
+<!--      </AnchorPane>-->
+   </children>
+</Pane>
