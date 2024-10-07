@@ -1,4 +1,4 @@
-package database;
+package code.database;
 
 import code.util;
 import javafx.collections.ObservableList;
@@ -10,7 +10,11 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static code.util.extractYear;
 
 
 public class db_members {
@@ -19,8 +23,8 @@ public class db_members {
         this.db_conn = db_conn;
     }
 
-    public void importMembers(){
-        String CSV_FILE_PATH = "src/main/resources/membershipform.csv";
+    public int[] importMembers(String CSV_FILE_PATH){
+//        String CSV_FILE_PATH = "src/main/resources/membershipform.csv";
         String line;
 
         List<String[]> data = new ArrayList<>(); // To store parsed data
@@ -28,7 +32,6 @@ public class db_members {
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
             // Read the header line (if necessary)
             String header = br.readLine(); // Uncomment if you want to read the header
-
             while ((line = br.readLine()) != null) {
                 // Use split method to parse the line
                 String[] values = line.split(",");
@@ -37,7 +40,7 @@ public class db_members {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int count = 0;
+        int[] count = {0, 0};
         for (String row[] : data) {
             if ((row[7].strip().equalsIgnoreCase("Paid"))) {
                 // Get
@@ -54,12 +57,12 @@ public class db_members {
                 }
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy H:mm:ss");
 
-                count += add(ucid, util.proper(fname), util.proper(lname), row[5], row[6], LocalDate.parse(row[0], formatter),
+                count[0] += add(ucid, util.proper(fname), util.proper(lname), extractYear(row[5]), row[6], LocalDate.parse(row[0], formatter),
                         LocalDate.now().plusYears(1), payment, email);
             }
         }
-
-        System.out.println(count + " members added.");
+        count[1] = data.size()-count[0];
+        return count;
     }
     public boolean getList(ObservableList<String[]> result) throws SQLException {
         String query = "SELECT * FROM members";
@@ -82,7 +85,7 @@ public class db_members {
     }
 
     /**
-     * Add a member to the database
+     * Add a member to the code.database
      * @param ucid ucid of the member to be added
      * @param fName first name
      * @param lName last name
@@ -93,8 +96,8 @@ public class db_members {
      */
     public int add(int ucid, String fName, String lName, String year, String citizen,
                    LocalDate since, LocalDate until, String payment, String email){
-        String member_query = "INSERT OR REPLACE INTO members (ucid, fName, lName, year, citizen, status) VALUES (?, ?, ?, ?, ?, ?) ";
-        String membership_query = "INSERT OR REPLACE INTO memberships (ucid, since, until, payment, email) VALUES (?, ?, ?, ?, ?) ";
+        String member_query = "INSERT INTO members (ucid, fName, lName, year, citizen, status) VALUES (?, ?, ?, ?, ?, ?) ";
+        String membership_query = "INSERT INTO memberships (ucid, since, until, payment, email) VALUES (?, ?, ?, ?, ?) ";
         try (PreparedStatement stmt1 = db_conn.prepareStatement(member_query)) {
 
             // Set parameters for the prepared statement
@@ -106,30 +109,29 @@ public class db_members {
             // Validity status set to inactive by default
             stmt1.setString(6, "inactive");
 
-            PreparedStatement stmt2 = null;
             // Change status to active if membership is valid in future
             if (until.isAfter(LocalDate.now())){
                 stmt1.setString(6, "active");
-                // Add row to the memberships table
-                stmt2 = db_conn.prepareStatement(membership_query);
-                stmt2.setInt(1, ucid);
-                stmt2.setDate(2, Date.valueOf(since));
-                stmt2.setDate(3, Date.valueOf(until));
-                stmt2.setString(4, payment);
-                stmt2.setString(5, email);
             }
-            // Execute statement
+            // Execute statement to add a member
             stmt1.executeUpdate();
-            // Execute statement if valid membership
-            if (stmt2 != null){
-                stmt2.executeUpdate();
-            }
+
+            // Add row to the memberships table
+            PreparedStatement stmt2 = db_conn.prepareStatement(membership_query);
+            stmt2.setInt(1, ucid);
+            stmt2.setDate(2, Date.valueOf(since));
+            stmt2.setDate(3, Date.valueOf(until));
+            stmt2.setString(4, payment);
+            stmt2.setString(5, email);
+
+            // Execute statement to update membership
+            stmt2.executeUpdate();
 
             return 1; // Return success
 
         } catch (SQLException e) {
             if (e.getErrorCode() == 19) { // check specific error code for duplicate keys
-                System.out.println("Member with UCID " + ucid + " already exists.");
+//                System.out.println("Member with UCID " + ucid + " already exists.");
             } else {
                 e.printStackTrace(); // handle other exceptions
             }
@@ -138,13 +140,13 @@ public class db_members {
     }
 
     /**
-     * Remove a member from the database
+     * Remove a member from the code.database
      * @param ucid the ucid of the member to be removed
      * @return return 1 if success, 0 otherwise
      */
     public int remove(int ucid){
         String member_query = "DELETE FROM members WHERE ucid = ?";
-        String membership_query = "DELETE FROM membership WHERE ucid = ?";
+        String membership_query = "DELETE FROM memberships WHERE ucid = ?";
         try {
             PreparedStatement pstmt = db_conn.prepareStatement(member_query);
             pstmt.setInt(1, ucid);
@@ -171,44 +173,62 @@ public class db_members {
 
     // Perhaps when you view a membership,
     // you should be able to edit the member details there
-    public static int update(){
+    public int update(int ucid, String year, String citizen, LocalDate until, String payment, String email) throws SQLException {
+        // Query for updating members table
+        String member_query = "UPDATE members SET "
+                + "year = COALESCE(NULLIF(?, ''), year), "
+                + "citizen = COALESCE(NULLIF(?, ''), citizen), "
+                + "status = ? "
+                + "WHERE ucid = ?";
+
+        // Query for updating memberships table
+        String membership_query = "UPDATE memberships SET "
+                + "until = COALESCE(NULLIF(?, ''), until), "
+                + "payment = COALESCE(NULLIF(?, ''), payment), "
+                + "email = COALESCE(NULLIF(?, ''), email) "
+                + "WHERE ucid = ?";
+        try {
+            PreparedStatement pstmtMember = db_conn.prepareStatement(member_query);
+            pstmtMember.setString(1, year);
+            pstmtMember.setString(2, citizen);
+            pstmtMember.setString(3, "active");
+            if (until.isBefore(LocalDate.now())){
+                pstmtMember.setString(3, "inactive");
+            }
+            pstmtMember.setInt(4, ucid);
+            pstmtMember.executeUpdate();
+
+            PreparedStatement pstmtMembership = db_conn.prepareStatement(membership_query);
+            pstmtMembership.setDate(1, Date.valueOf(until));
+            pstmtMembership.setString(2, payment);
+            pstmtMembership.setString(3, email);
+            pstmtMembership.setInt(4, ucid);
+            pstmtMembership.executeUpdate();
+            return 1;
+        }
+        catch (SQLException e){
+//            throw e;
+            System.out.println(e.getMessage());
+        }
         return 0;
     }
 
     /**
-     * Perform a search such that either first or last name is partially matched
-     * @param name the string to search for
-     * @return the set of members found, null otherwise
+     * Perform a search by partial or full member data
+     * @param data the ucid/first/last name to search for
+     * @return true if query executed, false otherwse
      */
 
-    public ResultSet getFromName(String name){
-        String query = "SELECT * FROM members WHERE fName LIKE ? OR lName LIKE ?";
-        ResultSet members = null;
-        try{
-            PreparedStatement pstmt = db_conn.prepareStatement(query);
-            pstmt.setString(1, "%" + name + "%");
-            pstmt.setString(2, "%" + name + "%");
-            members = pstmt.executeQuery();
-        }
-        catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return members;
-    }
-
-    /**
-     * Perform a search by member UCID
-     * @param ucid the ucid to search for
-     * @return the member found, null otherwse
-     */
-
-    public boolean getFromUCID(int ucid, ObservableList<String[]> matches){
-        String query = "SELECT * FROM members WHERE ucid LIKE ?";
+    public boolean searchMembers(String data, ObservableList<String[]> matches){
+        String query = "SELECT * FROM members WHERE ucid LIKE ? OR fName LIKE ? OR lName LIKE ? ";
         ResultSet list = null;
         try {
 
             PreparedStatement pstmt = db_conn.prepareStatement(query);
-            pstmt.setString(1, "%" + ucid + "%");
+
+            pstmt.setString(1, "%" + data + "%");
+            pstmt.setString(2, "%" + data + "%");
+            pstmt.setString(3, "%" + data + "%");
             list = pstmt.executeQuery();
 
             int columnCount = list.getMetaData().getColumnCount();
@@ -219,11 +239,12 @@ public class db_members {
                 }
                 matches.add(row);
             }
+            return true;
         }
         catch (SQLException e){
             System.out.println(e.getMessage());
         }
-        return true;
+        return false;
     }
 
     public ResultSet[] getMembership(String ucid){
@@ -240,6 +261,78 @@ public class db_members {
         }
         catch(SQLException e){
             System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    public ResultSet getMembersByNationality() throws SQLException {
+        String query = "SELECT citizen, count(*) AS number FROM members \n" +
+                        "GROUP BY citizen";
+        Statement stmt = db_conn.createStatement();
+        return stmt.executeQuery(query);
+    }
+    public ResultSet getMembersByYear() throws SQLException {
+        String query = "SELECT year, count(*) AS number FROM members \n" +
+                "GROUP BY year";
+        Statement stmt = db_conn.createStatement();
+        return stmt.executeQuery(query);
+    }
+    public int[] getMembersNumbers() throws SQLException {
+        String query = "SELECT status, count(*) AS number FROM members \n" +
+                        "GROUP BY status";
+        Statement stmt = db_conn.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        int[] numbers = {0,0};
+        while (res.next()){
+            if (res.getString("status").equalsIgnoreCase("active")){
+                numbers[0] = res.getInt("number");
+            }
+            else if (res.getString("status").equalsIgnoreCase("inactive")){
+                numbers[1] =  res.getInt("number");
+            }
+        }
+        return numbers;
+    }
+
+    /*
+    Function to get top 5 most recent members
+     */
+    public String[][] getRecentFiveMembers() throws SQLException {
+        String query = "SELECT ucid, fName, lName FROM members\n" +
+                        "WHERE ucid IN (\n" +
+                        "SELECT ucid FROM memberships\n" +
+                        "ORDER BY since LIMIT 5)";
+        Statement stmt = null;
+        String[][] result = new String[5][3];
+        try {
+            stmt = db_conn.createStatement();
+            ResultSet query_result = stmt.executeQuery(query);
+            int i = 0;
+            while(query_result.next()){
+                result[i][0] = query_result.getString("ucid");
+                result[i][1] = query_result.getString("fName");
+                result[i][2] = query_result.getString("lName");
+                i++;
+            }
+        } catch (SQLException e) {
+            // do nothing
+        }
+        return result;
+    }
+
+    public Set<String> getActiveUcids() throws SQLException {
+        String query = "SELECT ucid FROM members\n" +
+                "WHERE status = 'active'";
+        Set<String> result = new HashSet<>();
+        try{
+            Statement stmt = db_conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()){
+                result.add(rs.getString("ucid"));
+            }
+        }
+        catch (SQLException e){
+
         }
         return result;
     }

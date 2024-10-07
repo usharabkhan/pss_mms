@@ -1,26 +1,23 @@
 package code;
 
-import database.db_control;
-import database.db_members;
+import code.controllers.MainController;
+import code.database.db_control;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 import static java.lang.System.exit;
 
 public class App extends Application {
     public static db_control db_c;
+    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
@@ -44,7 +41,6 @@ public class App extends Application {
 
         stage.setOnCloseRequest(event -> {
             // Perform actions before closing
-
             try {
                 db_c.db_end();
             } catch (SQLException e) {}
@@ -58,4 +54,5 @@ public class App extends Application {
 //        db_c.getEventsLink().importEvents();
         launch(args);
     }
+
 }

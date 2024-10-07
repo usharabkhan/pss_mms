@@ -1,13 +1,9 @@
-package database;
+package code.database;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 public class db_control {
 
@@ -18,7 +14,7 @@ public class db_control {
 
     public db_control() {
         try {
-            // Establish connection to the database
+            // Establish connection to the code.database
             connection = DriverManager.getConnection(url);
             System.out.println("Connection to SQLite has been established.");
         } catch (SQLException e) {

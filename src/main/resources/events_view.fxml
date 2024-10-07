@@ -10,7 +10,7 @@
 
 
 <AnchorPane stylesheets="@styles.css"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.MainController"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.controllers.MainController"
             fx:id="events_main" layoutX="285.0" prefHeight="589.0" prefWidth="518.0">
    <children>
       <Pane fx:id="events_history" layoutX="8.0" layoutY="8.0" prefHeight="286.0" prefWidth="501.0">

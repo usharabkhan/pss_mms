@@ -1,4 +1,4 @@
-package database;
+package code.database;
 
 import java.sql.*;
 
