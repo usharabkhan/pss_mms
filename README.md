@@ -1,7 +1,7 @@
 # 🎉 PSS Membership Management System
 
-An application to streamline the management of memberships and event registrations
-for the Pakistani Students' Society.
+After witnessing delays and inefficiences in our current membership and event management process, I developed an application to streamline the management of memberships and event registrations
+for the Pakistani Students' Society at the University of Calgary.
 
 ---
 
@@ -65,25 +65,6 @@ Member tickets toggled in action:
 
 ![Events Page Screenshot](images/member_tickets.png)
 
----
-
-## 🛠️ Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/usharabkhan/pss_mms.git
-   cd pss_mms
-
-2. Install dependencies:
-
-   ```bash
-   mvn install
-
-3. Run the project:
-
-   ```bash
-   mvn javafx:run
-   
 ---
 
 ## 💻 Technologies Used
