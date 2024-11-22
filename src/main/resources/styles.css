@@ -1,0 +1,253 @@
+/* styles.css */
+* {
+    border-color: #007B33;
+}
+
+.root {
+    -fx-font-family: "Arial", system-ui, sans-serif;;
+    -fx-background-color: linear-gradient(to right, #E8F5E9, #C8E6C9);
+}
+.button {
+    -fx-background-color: #E3FDE6;
+    -fx-text-fill: #858585;
+    -fx-padding: .85em 1.5em;               /* Padding inside the button */
+    -fx-border-radius: 2em;                 /* Rounded border corners */
+    -fx-background-radius: 2em;             /* Ensures background follows border radius */
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+#ticket-mismatch-row{
+    -fx-background-color: #ffc7c7;
+}
+#ticket-mismatch-row:hover, #ticket-mismatch-row:selected{
+    -fx-background-color: #ff9d9d;
+    -fx-text-fill: white;
+}
+.button:hover{
+    -fx-background-color: #A5D6A7;
+}
+#mbrIconPane:hover #mbrCircle{
+    -fx-fill: #E8F5E9;
+    -fx-cursor: hand;
+}
+#mbrIconPane:hover #mbrInitials{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}
+#btn_delMember{
+    -fx-background-color: #ff7c7c;
+    -fx-text-fill: white;
+}
+#btn_delMember:hover{
+    -fx-background-color: #ffb5b5;
+}
+#pane_menu {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E3FDE6; /* Border color */
+    -fx-border-width: 0 0.05em 0 0; /* Border only on the right */
+    -fx-border-radius: 0 2em 2em 0; /* Rounded corners on the right */
+}
+
+#menu_buttons{
+    -fx-background-color: linear-gradient(to right, #C8E6C9, #FFFFFF);
+    -fx-text-fill: #007B33; /* Text color for buttons */
+    -fx-font-size: 1.2em; /* Font size for buttons */
+    -fx-border-width: 0.2em; /* Border thickness */
+    -fx-border-radius: 0; /* Square corners */
+    -fx-cursor: hand; /* Hand cursor on hover */
+    -fx-max-wdith: 100%;
+}
+#menu_buttons:hover, #menu_buttons:disabled{
+    -fx-background-color: #A5D6A7; /* Light green background on hover */
+    -fx-text-fill: #FFFFFF; /* Change text color to white on hover */
+    -fx-opacity: 1;
+}
+
+#innerpane {
+    -fx-background-color: #a2c0a2;
+    -fx-border-color: transparent;
+    -fx-border-width: .05em;
+    -fx-border-radius: 1em;
+    -fx-background-radius: 1em;
+}
+/* Style the entire TableView */
+.table-view {
+    -fx-background-color: #FFFFFF;  /* Background color of the table */
+    -fx-border-color: #E3FDE6;      /* Border color */
+    -fx-border-radius: 0.5em;  /* Bottom border */
+    -fx-background-radius: 0.5em;
+/*    -fx-padding: 0.5em;             *//* Padding around the table */
+}
+
+/* Table Header (Column Header) */
+.table-view .column-header-background {
+    -fx-border-radius: 0.5em;  /* Bottom border */
+    -fx-background-radius: 0.5em;
+    -fx-font-family: "Roboto";      /* Font style for the headers */
+    -fx-font-size: 14px;            /* Font size */
+    -fx-text-fill: #FFFFFF;         /* Text color */
+}
+
+/* Table Header Cell */
+.table-view .column-header .label {
+/*    -fx-text-fill: #FFFFFF;  *//* Text color for header cells */
+}
+
+/* Adjust the height of the headers */
+.table-view .column-header {
+    -fx-border-radius: 0.5em;
+    -fx-background-radius: 0.5em;
+    -fx-pref-height: 30px;  /* Height of the table header */
+}
+/* Table Row */
+.table-row-cell {
+    -fx-background-color: #FFFFFF;  /* Background color for rows */
+    -fx-border-color: transparent;  /* No border between rows */
+    -fx-alternate-row-fill-visible: true;  /* Enable alternate row colors */
+    -fx-text-fill: #333333;         /* Text color */
+    -fx-padding: 0.5em 0em;
+}
+
+/* Alternate Row Color */
+.table-row-cell:odd {
+    -fx-background-color: #F5F5F5;  /* Light gray for odd rows */
+}
+
+.table-row-cell:even {
+    -fx-background-color: #FFFFFF;  /* White for even rows */
+}
+
+/* Hover Effect for Table Row */
+.table-row-cell:hover {
+    -fx-background-color: #A5D6A7;  /* Light green on hover */
+    -fx-text-fill: #FFFFFF;         /* Text color changes to white */
+    -fx-cursor: hand;
+}
+
+/* Focused Row */
+.table-row-cell:focused {
+    -fx-background-color: #007B33;  /* Dark green for focused row */
+    -fx-text-fill: #FFFFFF;         /* White text for focused row */
+}
+
+.text-field, .choice-box {
+    -fx-background-color: white;      /* Equivalent to hsl(0 0 0/0) for transparent background */
+    -fx-border-color: #E3FDE6;
+    -fx-border-width: .05em;                 /* Border thickness */
+    -fx-padding: .5em .5em;
+    -fx-border-radius: 2em;                 /* Rounded border corners */
+    -fx-background-radius: 2em;             /* Ensures background follows border radius */
+    -fx-transition: 1s;                     /* Transition duration (this property may not fully work as in web CSS) */
+/*    -fx-text-fill: #A5D6A7;*/
+    -fx-font-size: 14px;
+
+    -fx-font-family: "Roboto"; /* Set your font */
+}
+.text-field:focused, .choice-box:focused{
+    -fx-background-color: #A5D6A7;
+    -fx-text-fill: white;
+}
+.text-field:hover, .choice-box:hover{
+    -fx-border-color: border-color;
+}
+.choice-box{
+    fx-text-fill: #858585;
+}
+.choice-box:hover {
+    -fx-cursor: hand;
+}
+
+.date-picker {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E3FDE6;
+    -fx-border-width: 0.05em;  /* Border thickness */
+    -fx-background-radius: 2em 0 0 2em; /* Ensures background follows border radius */
+    -fx-border-radius: 2em 0 0 2em;   /* Full rounded border for DatePicker container */
+}
+.date-picker:hover {
+    -fx-border-color: border-color;
+}
+
+.date-picker:focused {
+    -fx-border-color: #A5D6A7;
+    -fx-background-color: #A5D6A7;
+}
+
+.date-picker .text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 2em 0 0 2em; /* Rounded on left, square on right */
+    -fx-background-radius: 2em 0 0 2em;
+    -fx-border-color: transparent;
+    -fx-padding: 0.5em; /* Adjust padding to keep the text visible */
+    -fx-font-family: "Roboto";
+    -fx-font-size: 14px;
+}
+.date-picker .text-field:focused {
+    -fx-background-color: #A5D6A7;
+    -fx-border-color: transparent;
+}
+.date-picker .text-field:hover {
+    -fx-border-color: transparent;
+}
+.date-picker-popup {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: border-color;
+}
+.date-picker .arrow {
+/*    -fx-visible: false; *//* Make arrow invisible */
+    -fx-background-color: #A5D6A7;
+
+}
+
+
+
+
+#titleText {
+    -fx-text-fill: #007B33; /* Title text color */
+    -fx-font-size: 1.5em; /* Title font size */
+    -fx-padding: 0 0 1em 0; /* Padding below the title */
+    -fx-font-weight: bold; /* Make the title bold */
+}
+
+
+.label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333333;
+}
+
+.text-area {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+/* styles.css */
+.dialog-pane {
+    -fx-background-color: #E8F5E9; /* Background color for the alert window */
+}
+
+.dialog-pane .header-panel {
+/*    -fx-background-color: #a2c0a2;  *//* Background for the alert header */
+/*    -fx-text-fill: white;           *//* Text color for the alert header */
+    -fx-background-color: transparent;
+/*    -fx-opacity: 0;*/
+}
+
+.dialog-pane .content.label {
+    -fx-font-size: 14px;  /* Change the font size of the alert content */
+    -fx-text-fill: #858585; /* Text color for the content */
+    -fx-padding: 20px; /* Add padding to the content */
+}
+.dialog-pane .button-bar{
+    -fx-alignment: center; /* Center buttons */
+/*    -fx-padding: 10px;*/
+}
+.dialog-pane .button-bar .button {
+/*    -fx-background-color: #e76f51;  *//* Button background color */
+/*    -fx-text-fill: white;           *//* Button text color */
+/*    -fx-padding: 8px 16px;*/
+    -fx-alignment: center;
+}
+
+

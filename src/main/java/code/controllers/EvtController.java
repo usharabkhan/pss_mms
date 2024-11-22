@@ -1,5 +1,6 @@
 package code.controllers;
 
+import code.util;
 import com.opencsv.exceptions.CsvValidationException;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import com.opencsv.CSVReader;
 import java.io.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +27,14 @@ import java.util.Set;
 
 import static code.App.db_c;
 import static code.App.main;
+import static code.util.extractEmail;
 import static code.util.proper;
 
 public class EvtController {
     public Text txt_fileName;
     public TextField txt_memberSearch;
     private MainController mainController;
-    public TableColumn<String[], String> evt_colUcid, evt_colFname, evt_colLname, evt_colStatus, evt_colTicket;
+    public TableColumn<String[], String> evt_colUcid, evt_colFname, evt_colEmail, evt_colStatus, evt_colTicket;
     public TableView<String[]> evt_attendeeList;
     public Button btn_addAsMbr, btn_importEventList, btn_searchMbr;
     public CheckBox chk_mbrShow, chk_nonMbrShow;
@@ -48,9 +52,9 @@ public class EvtController {
             // Initialize column types
             evt_colUcid.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[0]));
             evt_colFname.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[1]));
-//            evt_colLname.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[2]));
             evt_colStatus.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[2]));
             evt_colTicket.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[3]));
+            evt_colEmail.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[4]));
 
             evt_attendeeList.setRowFactory(tv -> new TableRow<>() {
                 @Override
@@ -72,11 +76,11 @@ public class EvtController {
                     }
                 }
             });
-            try {
-                importEventList();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                importEventList();
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
         });
     }
 
@@ -105,7 +109,7 @@ public class EvtController {
                     while ((nextLine = reader.readNext()) != null) {
                         String ucid = nextLine[17];
                         if (!ucid.isBlank()) {
-                            String[] attendeeData = new String[4];
+                            String[] attendeeData = new String[5];
 //                            System.out.println(nextLine[2]);
                             attendeeData[0] = ucid;
                             attendeeData[1] = proper(nextLine[2]);  // Full name
@@ -113,13 +117,15 @@ public class EvtController {
                             if (activeMembers.contains(ucid)){
                                 attendeeData[2] = "active";
                             }
-                            attendeeData[3] = nextLine[4].contains("Non") ? "Member" : "Non-Member";          // Type of ticket purchased
+                            attendeeData[3] = util.proper(nextLine[4]).contains("Non") ? "Member" : "Non-Member";          // Type of ticket purchased
+                            attendeeData[4] = extractEmail(nextLine[3]);
+                            System.out.println(attendeeData[0]);
                             AllAttendeeData.add(attendeeData);
                             DisplayAttendeeData.add(attendeeData);
                             count++;
                         }
                     }
-
+                    System.out.println(count);
                     evt_attendeeList.getItems().clear();
                     evt_attendeeList.setItems(DisplayAttendeeData);
                     mainController.setSuccess("Successfully loaded event file " + selectedFile.getName());
@@ -185,5 +191,54 @@ public class EvtController {
             DisplayAttendeeData.removeIf(item -> item[2].equalsIgnoreCase("active"));
         }
 
+    }
+
+    /**
+     * Method to add attendee as member if record doesn't exist
+     * Provides data to prefill ucid, name, and email
+     * @param actionEvent
+     * @throws SQLException
+     */
+    public void addAsMember(ActionEvent actionEvent) throws SQLException {
+        String[] row = evt_attendeeList.getSelectionModel().getSelectedItem();
+        if (row != null && !row[0].isBlank()){
+            String[] data = new String[4];
+            data[0] = row[0]; // ucid
+            data[3] = row[4]; // email
+            String[] nameSplit = row[1].split("\\s");
+            if (nameSplit.length == 2){
+                data[1] = nameSplit[0]; // First name
+                data[2] = nameSplit[1]; // Last name
+            }
+            else if(nameSplit.length > 2){
+                data[1] = nameSplit[0] + " " + nameSplit[1]; // First name is two parts
+                data[2] = nameSplit[2];
+                for (int i = 3; i < nameSplit.length; i ++){
+                    data[2] = data[2] + " " + nameSplit[i];
+                }
+                data[2].strip();
+            }
+            mainController.showAddMbrWindow(data);
+
+            ResultSet[] temp = db_c.getMembersLink().getMembership(data[0]);
+            if (temp[1].next()){
+                // update status to active
+                if (temp[1].getString("status").equalsIgnoreCase("active")) {
+                    row[2] = "active";
+                    evt_attendeeList.refresh();
+                }
+            }
+        }
+    }
+
+
+    public void toggleAddAsMbrBtn(MouseEvent mouseEvent) {
+        String[] row = evt_attendeeList.getSelectionModel().getSelectedItem();
+        btn_addAsMbr.setDisable(row == null || row[0].isBlank()
+                || !row[2].equalsIgnoreCase("inactive"));
+    }
+
+    public void showEventsView() {
+        btn_addAsMbr.setDisable(true);
     }
 }

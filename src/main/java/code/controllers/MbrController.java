@@ -1,5 +1,6 @@
 package code.controllers;
 
+import code.util;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -34,13 +35,9 @@ public class MbrController {
 //    @FXML
 //    private Button btn_viewMembership, btn_searchMbr;
     @FXML
-    private TextField txt_mbrAddUcid, txt_mbrAddFname, txt_mbrAddLname, txt_mbrAddEmail, txt_memberSearch;
-    @FXML
-    private DatePicker pick_mbrAddSince, pick_mbrAddTill;
+    private TextField txt_memberSearch;
     @FXML
     public AnchorPane pane_mbrMain;
-    @FXML
-    private ChoiceBox pick_mbrAddCitizen, pick_mbrAddYear, pick_mbrAddPayment;
     @FXML
     private TableView<String[]> members_list;
     @FXML
@@ -57,7 +54,7 @@ public class MbrController {
                             ucidcol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[0]));
                             fnamecol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[1]));
                             lnamecol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[2]));
-                            yearstudycol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[3]));
+                            yearstudycol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(util.extractYear(cellData.getValue()[3])));
                             citizencol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[4]));
                             statuscol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()[5]));
                             loadMembers();
@@ -76,62 +73,7 @@ public class MbrController {
         }
     }
 
-    /**
-     * Function to add a member with the details entered
-     * @param actionEvent
-     * @return true if member was added, false otherwise
-     */
-    public boolean addMember(ActionEvent actionEvent) {
-        String ucid = txt_mbrAddUcid.getText();
-        String fname = txt_mbrAddFname.getText();
-        String lname = txt_mbrAddLname.getText();
-        String email = txt_mbrAddEmail.getText();
-        String year = null, citizen = null, payment = null;
-        // Make sure year, citizenship, and payment method are selected
-        try {
-            year = pick_mbrAddYear.getSelectionModel().getSelectedItem().toString();
-            citizen = pick_mbrAddCitizen.getSelectionModel().getSelectedItem().toString();
-            payment = pick_mbrAddPayment.getSelectionModel().getSelectedItem().toString();
-        }
-        catch(NullPointerException e){
-            return false;
-        }
-        LocalDate since = pick_mbrAddSince.getValue();
-        LocalDate till = pick_mbrAddTill.getValue();
 
-        // Make sure non empty values are entered
-        String[] strings = {ucid, fname, lname, email, year, citizen, payment};
-        for (String s : strings) {
-            if (s.isEmpty()) {
-                return false;
-            }
-        }
-        // Convert UCID into an int
-        try {
-            // Make sure UCID is an 8 digit number
-            if (ucid.length() == 8) {
-                // Make sure membership from and to dates are selected
-                if (since != null && till != null){
-                    db_c.getMembersLink().add(Integer.parseInt(ucid), fname, lname, year, citizen, since, till, payment, email);
-                    mainController.setSuccess("Member successfully added");
-                    showMembersView();
-                    mainController.updateHomeStats();
-                } else{
-                    mainController.setError("Error: Select membership validity from and to dates");
-                    return false;
-                }
-            }
-            else{
-                mainController.setError("Error: Enter a valid 8 digit UCID number");
-                return false;
-            }
-        }
-        catch (Exception e){
-            mainController.setError("Error: Enter a valid 8 digit UCID number");
-            return false;
-        }
-        return true;
-    }
     // Function to load all members from the code.database
     private void loadMembers() throws SQLException {
         members_list.setItems(members_db);
@@ -194,15 +136,7 @@ public class MbrController {
         if (pane_mbrMain != null) {
             btn_viewMembership.setDisable(true);
             loadMembers();
-            txt_mbrAddEmail.setText("");
-            txt_mbrAddFname.setText("");
-            txt_mbrAddLname.setText("");
-            txt_mbrAddUcid.setText("");
-            pick_mbrAddCitizen.setValue(null);
-            pick_mbrAddPayment.setValue(null);
-            pick_mbrAddSince.setValue(null);
-            pick_mbrAddTill.setValue(null);
-            pick_mbrAddYear.setValue(null);
+
             txt_memberSearch.setText("");
         }
     }
@@ -227,4 +161,7 @@ public class MbrController {
     }
 
 
+    public void showAddMbrWindow(ActionEvent actionEvent) throws SQLException {
+        mainController.showAddMbrWindow(new String[]{""});
+    }
 }

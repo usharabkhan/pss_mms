@@ -4,31 +4,64 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.TextField?>
 <AnchorPane fx:id="pane_evntTickets" layoutX="295.0" prefHeight="636.0" prefWidth="745.0" stylesheets="@styles.css" visible="false" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.controllers.EvtController">
     <children>
-        <TableView fx:id="evt_attendeeList" layoutX="14.0" layoutY="37.0" prefHeight="372.0" prefWidth="712.0">
+        <TableView fx:id="evt_attendeeList" layoutX="14.0" layoutY="37.0" onMousePressed="#toggleAddAsMbrBtn" prefHeight="413.0" prefWidth="712.0">
             <columns>
                 <TableColumn fx:id="evt_colUcid" editable="false" prefWidth="85.60003662109375" text="UCID" />
                 <TableColumn fx:id="evt_colFname" editable="false" prefWidth="146.4000244140625" text="Full Name" />
-<!--                <TableColumn fx:id="evt_colLname" editable="false" prefWidth="141.60003662109375" text="Last Name" />-->
                 <TableColumn fx:id="evt_colStatus" editable="false" prefWidth="99.20001220703125" text="Status" />
                 <TableColumn fx:id="evt_colTicket" editable="false" prefWidth="115.9998779296875" text="Ticket Purchased" />
+                <TableColumn fx:id="evt_colEmail" editable="false" prefWidth="200" text="Email Address" />
             </columns>
         </TableView>
-        <AnchorPane id="innerpane" layoutX="16.0" layoutY="432.0" prefHeight="133.0" prefWidth="712.0">
+        <AnchorPane id="innerpane" layoutX="16.0" layoutY="475.0" prefHeight="147.0" prefWidth="712.0">
             <children>
-                <Button fx:id="btn_addAsMbr" layoutX="562.0" layoutY="76.0" mnemonicParsing="false" text="Add as Member" />
-                <Button fx:id="btn_importEventList" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" onAction="#importEventList" text="Add Event List" />
-                <Button fx:id="btn_searchMbr" layoutX="604.0" layoutY="11.0" mnemonicParsing="false" onAction="#searchMember" prefHeight="38.0" prefWidth="98.0" text="Search" />
-                <TextField fx:id="txt_memberSearch" layoutX="443.0" layoutY="13.0" onKeyReleased="#checkMbrSearchText" prefHeight="34.0" prefWidth="150.0" promptText="Name/UCID" />
-                <Text fx:id="txt_fileName" layoutX="156.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No event file selected" />
-                <CheckBox fx:id="chk_mbrShow" layoutX="14.0" layoutY="63.0" mnemonicParsing="false" onAction="#showMembers" text="Show Members" />
-                <CheckBox fx:id="chk_nonMbrShow" layoutX="14.0" layoutY="97.0" mnemonicParsing="false" onAction="#showNonMembers" text="Show Non-Members" />
+                <Button fx:id="btn_addAsMbr" layoutX="528.0" layoutY="82.0" mnemonicParsing="false" onAction="#addAsMember" text="Add as Member">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/add_mbr.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+                <Button fx:id="btn_importEventList" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#importEventList" text="Add Event List">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/import_mbr.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+                <TextField fx:id="txt_memberSearch" layoutX="385.0" layoutY="21.0" onKeyReleased="#checkMbrSearchText" onAction="#searchMember" prefHeight="34.0" prefWidth="150.0" promptText="Name/UCID" />
+                <Text fx:id="txt_fileName" layoutX="185.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No event file selected" />
+                <CheckBox fx:id="chk_mbrShow" layoutX="16.0" layoutY="77.0" mnemonicParsing="false" onAction="#showMembers" text="Show Members" />
+                <CheckBox fx:id="chk_nonMbrShow" layoutX="16.0" layoutY="111.0" mnemonicParsing="false" onAction="#showNonMembers" text="Show Non-Members" />
+            <Button fx:id="btn_searchMbr" layoutX="566.0" layoutY="14.0" mnemonicParsing="false" onAction="#searchMember" prefHeight="49.0" prefWidth="130.0" text="Search">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/search.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+<!--            <Button fx:id="btn_viewMembership"  layoutX="263.0" layoutY="82.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="185.0" text="View Membership">-->
+<!--               <graphic>-->
+<!--                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                     <image>-->
+<!--                        <Image url="@images/view_icon.png" />-->
+<!--                     </image>-->
+<!--                  </ImageView>-->
+<!--               </graphic>-->
+<!--            </Button>-->
             </children>
         </AnchorPane>
         <Text fx:id="txt_eveDetLbl" layoutX="297.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Event Details" textAlignment="CENTER" wrappingWidth="150.0">

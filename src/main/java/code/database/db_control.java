@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class db_control {
 
-    public static String url = "jdbc:sqlite:src/main/resources/database.db"; // Path to SQLite file
+    public static String url = "jdbc:sqlite:src/main/resources/dummy.db"; // Path to SQLite file
     private static Connection connection = null;
     private db_members membersLink = null;
     private db_events eventsLink = null;

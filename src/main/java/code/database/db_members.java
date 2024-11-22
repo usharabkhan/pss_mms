@@ -131,9 +131,7 @@ public class db_members {
 
         } catch (SQLException e) {
             if (e.getErrorCode() == 19) { // check specific error code for duplicate keys
-//                System.out.println("Member with UCID " + ucid + " already exists.");
-            } else {
-                e.printStackTrace(); // handle other exceptions
+                return 19;
             }
             return 0; // Return an error
         }
@@ -285,10 +283,10 @@ public class db_members {
         int[] numbers = {0,0};
         while (res.next()){
             if (res.getString("status").equalsIgnoreCase("active")){
-                numbers[0] = res.getInt("number");
+                numbers[0] += res.getInt("number");
             }
             else if (res.getString("status").equalsIgnoreCase("inactive")){
-                numbers[1] =  res.getInt("number");
+                numbers[1] +=  res.getInt("number");
             }
         }
         return numbers;

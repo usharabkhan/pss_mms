@@ -1,11 +1,15 @@
 package code.controllers;
 
 import code.database.db_control;
+import code.util;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -17,10 +21,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javafx.event.ActionEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -28,8 +35,10 @@ import java.util.Optional;
 import static code.App.db_c;
 import static code.util.getInitials;
 import static java.lang.System.exit;
+import static java.lang.System.setErr;
 
 public class MainController {
+    public AnchorPane pane_addMbr;
     private HashMap<String, String[]> main_mbrList;
     @FXML
     public HBox hbox_mbrs;
@@ -42,13 +51,16 @@ public class MainController {
     private Pane window_main;
 
     @FXML
-    private Button btn_membersView, btn_eventsView, btn_homeView;
+    private Button btn_membersView, btn_eventsView, btn_homeView, btn_closeAddMbr;
     @FXML
     private AnchorPane events_main, pane_mbrMain, pane_mbrDet, pane_evntTickets, pane_home;
     
     @FXML
-    private TextField txt_memberSearch;
-
+    private TextField txt_mbrAddUcid, txt_mbrAddFname, txt_mbrAddLname, txt_mbrAddEmail;
+    @FXML
+    private DatePicker pick_mbrAddSince, pick_mbrAddTill;
+    @FXML
+    private ChoiceBox pick_mbrAddCitizen, pick_mbrAddYear, pick_mbrAddPayment;
     private MbrController mbrController;
     private MbrDetController mbrDetController;
     private EvtController evtController;
@@ -72,7 +84,9 @@ public class MainController {
                     }
 
                     updateHomeStats();
-                    showEventsView(); /// DELETE THIS
+//                    showEventsView(); /// DELETE THIS
+//                    openNewWindow();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -150,6 +164,7 @@ public class MainController {
             btn_membersView.setDisable(false);
             btn_homeView.setDisable(false);
             btn_eventsView.setDisable(true);
+            evtController.showEventsView();
         }
     }
 
@@ -217,7 +232,7 @@ public class MainController {
         ResultSet yearData_db = db_c.getMembersLink().getMembersByYear();
 
         while (yearData_db.next()){
-            yearData.getData().add(new XYChart.Data<>(yearData_db.getString("year"), yearData_db.getInt("number")));
+            yearData.getData().add(new XYChart.Data<>(util.extractYear(yearData_db.getString("year")), yearData_db.getInt("number")));
         }
         home_mbrYears.getData().clear();
         home_mbrYears.getData().add(yearData);
@@ -245,8 +260,127 @@ public class MainController {
         }
     }
 
-    public void setMemberList(HashMap<String, String[]> list){
-        main_mbrList = list;
+    public boolean showAddMbrWindow(String[] data) throws SQLException {
+        // Member already in DB, but inactive
+        if (!data[0].isBlank()){
+            ResultSet[] memberDetsFromDb = db_c.getMembersLink().getMembership(data[0]);
+            if (memberDetsFromDb[0].next()){
+                setError("Error: Member data already exists in database,\n manually update their status");
+                return false;
+            }
+
+            // Prefill fields if data provided
+            txt_mbrAddUcid.setText(data[0]);
+            txt_mbrAddFname.setText(data[1]);
+            txt_mbrAddLname.setText(data[2]);
+            txt_mbrAddEmail.setText(data[3]);
+            System.out.println(data[0]);
+        }
+        // Create a new stage (popup window)
+        Stage addMbrPopup = new Stage();
+        Pane main_pane = (Pane) pane_addMbr.getParent();
+        main_pane.getChildren().remove(pane_addMbr);
+
+        // Set modality to block interaction with other windows
+        addMbrPopup.initModality(Modality.APPLICATION_MODAL);
+        addMbrPopup.setTitle("Add Member");
+
+        // Set close button's action
+        btn_closeAddMbr.setOnAction(e -> addMbrPopup.close());
+
+        Scene scene = new Scene(pane_addMbr);
+        addMbrPopup.setScene(scene);
+        pane_addMbr.setVisible(true);
+
+        // Show the popup
+        addMbrPopup.showAndWait();
+
+        // Reset fields
+        txt_mbrAddEmail.setText("");
+        txt_mbrAddFname.setText("");
+        txt_mbrAddLname.setText("");
+        txt_mbrAddUcid.setText("");
+        pick_mbrAddCitizen.setValue(null);
+        pick_mbrAddPayment.setValue(null);
+        pick_mbrAddSince.setValue(null);
+        pick_mbrAddTill.setValue(null);
+        pick_mbrAddYear.setValue(null);
+
+        // Add pane back to the root
+        main_pane.getChildren().add(pane_addMbr);
+        pane_addMbr.setVisible(false);
+        return false;
+    }
+    /**
+     * Function to add a member with the details entered
+     * @return true if member was added, false otherwise
+     */
+    public boolean addMember(ActionEvent event) {
+        String ucid = txt_mbrAddUcid.getText();
+        String fname = txt_mbrAddFname.getText();
+        String lname = txt_mbrAddLname.getText();
+        String email = txt_mbrAddEmail.getText();
+        String year = null, citizen = null, payment = null;
+        // Make sure year, citizenship, and payment method are selected
+        try {
+            year = pick_mbrAddYear.getSelectionModel().getSelectedItem().toString();
+            citizen = pick_mbrAddCitizen.getSelectionModel().getSelectedItem().toString();
+            payment = pick_mbrAddPayment.getSelectionModel().getSelectedItem().toString();
+        }
+        catch(NullPointerException e){
+            return false;
+        }
+        LocalDate since = pick_mbrAddSince.getValue();
+        LocalDate till = pick_mbrAddTill.getValue();
+
+        // Make sure non empty values are entered
+        String[] strings = {ucid, fname, lname, email, year, citizen, payment};
+        for (String s : strings) {
+            if (s.isEmpty()) {
+                return false;
+            }
+        }
+        // Convert UCID into an int
+        try {
+            // Make sure UCID is an 8 digit number
+            if (ucid.length() == 8) {
+                // Make sure membership from and to dates are selected
+                if (since != null && till != null){
+                    int success = db_c.getMembersLink().add(Integer.parseInt(ucid), fname, lname, year, citizen, since, till, payment, email);
+                    if (success == 19){
+                        setError("Error: Member with UCID " + ucid + " already exists.");
+                        return false;
+                    }
+                    else if (success == 1){
+                        setSuccess("Member successfully added");
+                        // Close the popup window
+                        Node source = (Node) event.getSource();
+                        // Get the stage from the button
+                        Stage stage = (Stage) source.getScene().getWindow();
+                        stage.close();
+//                        showMembersView();
+                        updateHomeStats();
+                    }
+                    else {
+                        setError("Error: Unable to add member");
+                        return false;
+                    }
+
+                } else{
+                    setError("Error: Select membership validity from and to dates");
+                    return false;
+                }
+            }
+            else{
+                setError("Error: Enter a valid 8 digit UCID number");
+                return false;
+            }
+        }
+        catch (Exception e){
+            setError("Error: Enter a valid 8 digit UCID number");
+            return false;
+        }
+        return true;
     }
 
 }

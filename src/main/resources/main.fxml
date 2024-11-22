@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,12 +17,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<?import javafx.collections.FXCollections?>
 
 <Pane fx:id="window_main" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="638.0" prefWidth="1036.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="code.controllers.MainController">
    <fx:include fx:id="pane_evntTickets" source="event_detail_view.fxml"/>
    <fx:include fx:id="pane_mbrMain" source="members_view.fxml"/>
    <fx:include fx:id="pane_mbrDet" source="member_details.fxml"/>
+<!--   <fx:include fx:id="pane_addMbr" source="member_add.fxml"/>-->
    <children>
       <AnchorPane fx:id="pane_menu" prefHeight="636.0" prefWidth="295.0">
          <children>
@@ -82,10 +86,10 @@
                      </image>
                   </ImageView>
                   <Text fx:id="txt_totalMbr" layoutX="67.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="200 total members" />
-                  <HBox fx:id="hbox_mbrs" layoutX="17.0" layoutY="351.0" prefHeight="100.0" prefWidth="643.0" />
-                  <BarChart fx:id="home_mbrNationality" layoutX="357.0" layoutY="90.0" prefHeight="220.0" prefWidth="274.0" legendVisible="false" verticalGridLinesVisible="false" >
+                  <HBox fx:id="hbox_mbrs" layoutX="150.0" layoutY="322.0" prefHeight="100.0" prefWidth="527.0" />
+                  <BarChart fx:id="home_mbrNationality" layoutX="357.0" layoutY="90.0" legendVisible="false" prefHeight="220.0" prefWidth="274.0" verticalGridLinesVisible="false">
                      <xAxis>
-                        <CategoryAxis label="Nationality" prefWidth="197.0" side="BOTTOM" >
+                        <CategoryAxis label="Nationality" prefWidth="197.0" side="BOTTOM">
                            <categories>
                               <FXCollections fx:factory="observableArrayList">
                                   <String fx:value="International" />
@@ -95,12 +99,12 @@
                         </CategoryAxis>
                      </xAxis>
                      <yAxis>
-                        <NumberAxis autoRanging="false" tickUnit="10" label="Number" side="LEFT" />
+                        <NumberAxis autoRanging="false" label="Number" side="LEFT" tickUnit="10" />
                      </yAxis>
                   </BarChart>
-                  <BarChart fx:id="home_mbrYears" layoutX="23.0" layoutY="90.0" prefHeight="220.0" prefWidth="274.0" legendVisible="false" verticalGridLinesVisible="false">
+                  <BarChart fx:id="home_mbrYears" layoutX="23.0" layoutY="90.0" legendVisible="false" prefHeight="220.0" prefWidth="274.0" verticalGridLinesVisible="false">
                     <xAxis>
-                      <CategoryAxis label="Year" side="BOTTOM" >
+                      <CategoryAxis label="Year" side="BOTTOM">
                         <categories>
                            <FXCollections fx:factory="observableArrayList">
                               <String fx:value="1st" />
@@ -118,10 +122,68 @@
                   </BarChart>
                   <Text layoutX="116.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members By Year" />
                   <Text layoutX="441.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members By Nationality" />
+                  <Text layoutX="23.0" layoutY="376.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Recent Members" />
                </children>
             </AnchorPane>
          </children>
       </AnchorPane>
-
+      <AnchorPane fx:id="pane_addMbr" prefHeight="450.0" prefWidth="633.0" stylesheets="@styles.css" visible="false">
+         <children>
+            <AnchorPane id="innerpane" layoutX="14.0" layoutY="35.0" prefHeight="392.0" prefWidth="608.0">
+               <children>
+                  <TextField fx:id="txt_mbrAddFname" layoutX="106.0" layoutY="30.0" promptText="First Name" />
+                  <TextField fx:id="txt_mbrAddLname" layoutX="406.0" layoutY="30.0" promptText="Last Name" style="-fx-border: none;" />
+                  <TextField fx:id="txt_mbrAddUcid" layoutX="106.0" layoutY="86.0" promptText="UCID" />
+                  <TextField fx:id="txt_mbrAddEmail" layoutX="405.0" layoutY="89.0" promptText="Email Address" />
+                  <ChoiceBox fx:id="pick_mbrAddYear" layoutX="430.0" layoutY="144.0" prefHeight="34.0" prefWidth="130.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="1st" />
+                           <String fx:value="2nd" />
+                           <String fx:value="3rd" />
+                           <String fx:value="4th+" />
+                           <String fx:value="Grad" />
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <DatePicker fx:id="pick_mbrAddTill" layoutX="439.0" layoutY="204.0" prefHeight="35.0" prefWidth="112.0" />
+                  <DatePicker fx:id="pick_mbrAddSince" layoutX="137.0" layoutY="204.0" prefHeight="35.0" prefWidth="112.0" />
+                  <ChoiceBox fx:id="pick_mbrAddCitizen" layoutX="128.0" layoutY="144.0" prefHeight="34.0" prefWidth="130.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Domestic" />
+                           <String fx:value="International" />
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <ChoiceBox fx:id="pick_mbrAddPayment" layoutX="283.0" layoutY="265.0" prefHeight="34.0" prefWidth="130.0">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Etransfer" />
+                           <String fx:value="Cash" />
+                           <String fx:value="Other" />
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <Text layoutX="58.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UCID:" />
+                  <Text layoutX="28.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name:" />
+                  <Text layoutX="326.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name:" />
+                  <Text layoutX="313.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year of Study:" />
+                  <Text layoutX="51.0" layoutY="169.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Citizen:" />
+                  <Text layoutX="353.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:" />
+                  <Text layoutX="15.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Since:" />
+                  <Text layoutX="308.0" layoutY="229.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Until:" />
+                  <Text layoutX="178.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Payment Method:" />
+                  <Button fx:id="btn_addMember" layoutX="164.0" layoutY="338.0" mnemonicParsing="false" onAction="#addMember" text="Add Member" />
+                  <Button fx:id="btn_closeAddMbr" layoutX="336.0" layoutY="338.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="123.0" text="Cancel" />
+               </children>
+            </AnchorPane>
+            <Text layoutX="254.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add a New Member" textAlignment="CENTER">
+               <font>
+                  <Font name="Segoe UI Semibold" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
    </children>
 </Pane>
